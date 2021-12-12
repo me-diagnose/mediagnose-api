@@ -42,7 +42,7 @@ async function register(userData) {
                 password: userData.password
             });
 
-            resolve(addedUserData);
+            resolve({accessToken: generateAccessToken(addedUserData)});
         } catch (error) {
             return reject({code: error.code || 500, reason: error.message})
         }
