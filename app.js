@@ -4,12 +4,12 @@ dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
 const authRoute = require('./routes/auth');
 const userRoute = require('./routes/user');
-
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+const paypalRoute = require('./routes/paypal');
 
 function setupCORS(req, res, next) {
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -25,5 +25,6 @@ app.all('/*', setupCORS);
 
 app.use('/auth', authRoute);
 app.use('/user', userRoute);
+app.use('/payment', paypalRoute);
 
 app.listen(PORT);
