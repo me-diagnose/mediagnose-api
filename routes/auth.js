@@ -1,14 +1,11 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const {MongoClient} = require('mongodb');
+const generateAccessToken = require('../helpers/jwt');
 
 const router = express.Router();
 const dbName = process.env.DATABASE_NAME;
 const url = process.env.MONGODB_URI;
 
-function generateAccessToken(userCredentials) {
-    return jwt.sign({username: userCredentials.username, id: userCredentials.userId}, process.env.TOKEN_SECRET, {expiresIn: '1800s'});
-}
 
 async function register(userData) {
     return new Promise(async (resolve, reject) => {
@@ -101,7 +98,6 @@ router.route('/register').post(async (req, res) => {
     } catch (error) {
         res.status(error.code).send(error.reason);
     }
-
 });
 
 router.route('/login').post(async (req, res) => {
