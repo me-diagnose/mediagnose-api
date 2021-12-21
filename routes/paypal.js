@@ -46,7 +46,7 @@ async function captureOrder(orderId, accessToken) {
             const response = await paypalClient.execute(request);
 
             if (response.result.status === 'COMPLETED') {
-                 resolve(await saveOrderDate(accessToken));
+                resolve(await saveOrderDate(accessToken));
             }
         } catch (error) {
             reject({code: error.code || 500, reason: error.message})
@@ -56,8 +56,8 @@ async function captureOrder(orderId, accessToken) {
 
 async function saveOrderDate(accessToken) {
     return new Promise(async (resolve, reject) => {
-            const mongoClient = new MongoClient(process.env.MONGODB_URI);
             try {
+                const mongoClient = new MongoClient(process.env.MONGODB_URI);
                 await mongoClient.connect();
                 const db = mongoClient.db(process.env.DATABASE_NAME);
                 const userDecoded = jwt.verify(accessToken, process.env.TOKEN_SECRET);
@@ -70,7 +70,10 @@ async function saveOrderDate(accessToken) {
                     _id: ObjectId(userDecoded.id)
                 });
 
-                resolve(generateAccessToken({username, orderDate, id: userDecoded.id}));
+                resolve({
+                    accessToken: generateAccessToken({username, orderDate, id: userDecoded.id}),
+                    orderDate: Date.now()
+                });
             } catch (error) {
                 return reject({code: error.code || 500, reason: error.message})
             }
@@ -90,8 +93,8 @@ router.route('/initiate').get(authMiddleWare, async (req, res) => {
 router.route('/approve').get(authMiddleWare, async (req, res) => {
     try {
         const token = req.headers['x-access-token'];
-        const newToken = await captureOrder(req.query.token, token, process.env.DEBUG);
-        res.send(newToken);
+        const newAuth = await captureOrder(req.query.token, token);
+        res.send(newAuth);
     } catch (error) {
         res.status(error.code).send(error.reason);
     }

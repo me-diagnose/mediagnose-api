@@ -1,5 +1,5 @@
 const express = require('express');
-const {MongoClient} = require('mongodb');
+const {MongoClient, ObjectId} = require('mongodb');
 const generateAccessToken = require('../helpers/jwt');
 
 const router = express.Router();
@@ -39,7 +39,7 @@ async function register(userData) {
                 password: userData.password
             });
 
-            resolve({accessToken: generateAccessToken(addedUserData)});
+            resolve({accessToken: generateAccessToken({username: userData.username, userId: addedUserData.insertedId.toString()})});
         } catch (error) {
             return reject({code: error.code || 500, reason: error.message})
         }
@@ -72,8 +72,12 @@ async function login(userCredentials) {
                 userId: user._id,
             });
 
+            const userOrderDate = await db.collection('users').findOne({
+                _id: ObjectId(user.id)
+            });
+
             if (userSavedCredentials.password === userCredentials.password) {
-                resolve({accessToken: generateAccessToken(userSavedCredentials)});
+                resolve({accessToken: generateAccessToken(userSavedCredentials), orderDate: userOrderDate});
             } else {
                 reject({
                     code: 401,
