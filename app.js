@@ -23,6 +23,7 @@ function setupCORS(req, res, next) {
 }
 app.all('/*', setupCORS);
 
+app.use(express.static("./"))
 app.use('/auth', authRoute);
 app.use('/user', userRoute);
 app.use('/payment', paypalRoute);
