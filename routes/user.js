@@ -22,7 +22,6 @@ async function getUser(token) {
                 _id: ObjectId(userDecoded.id)
             });
 
-            console.log(user);
             resolve(user);
         } catch(error) {
             return reject({code: error.code || 500, reason: error.message})
