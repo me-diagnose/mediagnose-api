@@ -21,12 +21,21 @@ function setupCORS(req, res, next) {
         next();
     }
 }
+function requireHTTPS(req, res, next) {
+    // The 'x-forwarded-proto' check is for Heroku
+    if (!req.secure && req.get('x-forwarded-proto') !== 'https') {
+        return res.redirect('https://' + req.get('host') + req.url);
+    }
+    next();
+}
 
 app.all('/*', setupCORS);
 app.use(express.static("./"))
 app.use('/auth', authRoute);
 app.use('/user', userRoute);
 app.use('/payment', paypalRoute);
+app.use(requireHTTPS);
+
 app.get('/', (req, res) => {
     res
         .status(200)
