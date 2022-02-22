@@ -1,0 +1,23 @@
+{
+  "name": "mediagnose-api",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "debug": "DEBUG=* nodemon app.js"
+  },
+  "author": "Hamza Nouinou",
+  "license": "ISC",
+  "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "debug": "^4.3.3",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.2.1",
+    "nodemon": "2.0.15"
+  },
+  "engines": {
+    "node": "16.x"
+  }
+}
